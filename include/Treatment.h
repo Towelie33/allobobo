@@ -10,8 +10,9 @@ class Treatment
 {
     public:
 
-        Treatment(TreatmentType type, TimeInterval schedule = TimeInterval::GET_FULL_DAY());
+        Treatment(unsigned int id, TreatmentType type, TimeInterval schedule = TimeInterval::GET_FULL_DAY());
 
+        unsigned int id() const { return m_id; }
         TreatmentType type() const { return m_type; }
         TimeInterval schedule() const { return m_schedule; }
         bool is_scheduled() const { return m_is_scheduled; }
@@ -22,8 +23,9 @@ class Treatment
 
     private:
 
-        TreatmentType m_type;
-        TimeInterval m_schedule;
+        const unsigned int m_id;
+        const TreatmentType m_type;
+        const TimeInterval m_schedule;
         bool m_is_scheduled;
 };
 

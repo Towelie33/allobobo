@@ -3,20 +3,29 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "Utils.h"
 #include "Nurse.h"
 #include "Patient.h"
 
 Inputs::Inputs()
 {}
 
-Inputs::Inputs(std::vector<Nurse> nurses, std::vector<Patient> patients)
-    :m_nurses(nurses), m_patients(patients)
+Inputs::Inputs(std::vector<TreatmentType> types, std::vector<Nurse> nurses, std::vector<Patient> patients)
+    :m_types(types), m_nurses(nurses), m_patients(patients)
+{}
+
+TreatmentType* Inputs::get_type(int i)
 {
-    // Set nurse indexes
-    for (int i = 0, len = m_nurses.size(); i < len; ++i)
+    if (i >= 0 && i < types_size())
     {
-        m_nurses[i].index(i);
+        return &m_types[i];
     }
+    return nullptr;
+}
+
+void Inputs::add_type(TreatmentType type)
+{
+    m_types.push_back(type);
 }
 
 Nurse* Inputs::get_nurse(int i)
@@ -30,7 +39,6 @@ Nurse* Inputs::get_nurse(int i)
 
 void Inputs::add_nurse(Nurse nurse)
 {
-    nurse.index(m_nurses.size());
     m_nurses.push_back(nurse);
 }
 
@@ -85,14 +93,20 @@ void Inputs::reset()
 
 std::string Inputs::to_string() const
 {
-    // Convert nurses number to string
-    std::stringstream sstream_nurses;
-    sstream_nurses << nurses_size();
-    std::string nurse_nb = sstream_nurses.str();
+    // Add types to the string
+    std::string str = "*** " + int_to_string(types_size()) + " treatment type(s) ***";
+    for (int i = 0, len = types_size(); i < len; ++i)
+    {
+        str = str + "\n" + m_types[i].to_string();
+        if (i < len - 1)
+        {
+            str = str + ",";
+        }
+    }
 
     // Add nurses to the string
-    std::string str = "*** " + nurse_nb + " nurse(s) ***";
-    for (int i = 0, len = m_nurses.size(); i < len; ++i)
+    str = str + "\n\n*** " + int_to_string(nurses_size()) + " nurse(s) ***";
+    for (int i = 0, len = nurses_size(); i < len; ++i)
     {
         str = str + "\n" + m_nurses[i].to_string();
         if (i < len - 1)
@@ -101,14 +115,9 @@ std::string Inputs::to_string() const
         }
     }
 
-    // Convert nurses number to string
-    std::stringstream sstream_patients;
-    sstream_patients << patients_size();
-    std::string patient_nb = sstream_patients.str();
-
     // Add patients to the string
-    str = str + "\n\n*** " + patient_nb + " patient(s) ***";
-    for (int i = 0, len = m_patients.size(); i < len; ++i)
+    str = str + "\n\n*** " + int_to_string(patients_size()) + " patient(s) ***";
+    for (int i = 0, len = patients_size(); i < len; ++i)
     {
         str = str + "\n" + m_patients[i].to_string();
         if (i < len - 1)

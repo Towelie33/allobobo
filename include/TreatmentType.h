@@ -9,10 +9,10 @@ class TreatmentType
 {
     public:
 
-        TreatmentType(std::string name, Time duration);
-        TreatmentType(std::string name, short duration);
+        TreatmentType(unsigned int id, Time duration);
+        TreatmentType(unsigned int id, short duration);
 
-        std::string name() const { return m_name; }
+        unsigned int id() const { return m_id; }
         Time duration() const { return m_duration; }
 
         std::string to_string() const;
@@ -20,8 +20,8 @@ class TreatmentType
 
     private:
 
-        std::string m_name;
-        Time m_duration;
+        const unsigned int m_id;
+        const Time m_duration;
 };
 
 bool operator==(TreatmentType const& type1, TreatmentType const& type2);

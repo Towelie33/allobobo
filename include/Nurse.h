@@ -13,21 +13,21 @@ class Nurse
 {
     public:
 
-        Nurse(unsigned short id,
+        Nurse(unsigned int id,
               Point starting_point = Point::GET_ORIGIN(),
               TimeInterval timetable = TimeInterval::GET_FULL_DAY());
 
-        Nurse(unsigned short id,
+        Nurse(unsigned int id,
               TreatmentType type,
               Point starting_point = Point::GET_ORIGIN(),
               TimeInterval timetable = TimeInterval::GET_FULL_DAY());
 
-        Nurse(unsigned short id,
+        Nurse(unsigned int id,
               std::vector<TreatmentType> cannot_do,
               Point starting_point = Point::GET_ORIGIN(),
               TimeInterval timetable = TimeInterval::GET_FULL_DAY());
 
-        unsigned short id() const { return m_id; }
+        unsigned int id() const { return m_id; }
         std::vector<TreatmentType> cannot_do() const { return m_cannot_do; }
         Point starting_point() const { return m_starting_point; }
         Point position() const { return m_position; }
@@ -35,8 +35,8 @@ class Nurse
         TimeInterval timetable() const { return m_timetable; }
         Time available() const { return m_available; }
         void available(Time const& val) { m_available = val; }
-        short index() const { return m_index; }
-        void index(short val) { m_index = val; }
+        int index() const { return m_index; }
+        void index(int val) { m_index = val; }
 
         void add_treatment_type(TreatmentType const& type);
         bool can_do(TreatmentType const& type) const;
@@ -48,13 +48,13 @@ class Nurse
 
     private:
 
-        unsigned short m_id;
+        const unsigned int m_id;
         std::vector<TreatmentType> m_cannot_do;
         const Point m_starting_point;
         Point m_position;
-        TimeInterval m_timetable;
+        const TimeInterval m_timetable;
         Time m_available;
-        short m_index;
+        int m_index;
 };
 
 bool operator<(Nurse const& nurse1, Nurse const& nurse2);

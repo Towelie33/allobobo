@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "Utils.h"
 #include "Point.h"
 #include "Time.h"
 #include "TimeInterval.h"
@@ -22,18 +23,7 @@ Algorithm::~Algorithm()
     // Delete appointments
     for (int i = 0, len = appointments_size(); i < len; ++i)
     {
-        for (Appointment* appointment: m_appointments[i])
-        {
-            delete appointment;
-        }
-    }
-}
-
-void Algorithm::initialize_appointments()
-{
-    for (int i = 0, len = m_inputs->nurses_size(); i < len; ++i)
-    {
-        m_appointments.push_back(std::vector<Appointment*>());
+        delete m_appointments[i];
     }
 }
 
@@ -46,7 +36,7 @@ Treatment* Algorithm::is_available(Patient *patient, Time const& time, Nurse con
 {
     for (int i = 0, len = patient->treatments_size(); i < len; ++i)
     {
-        Treatment *treatment = patient->get_treatment(i);
+        Treatment *treatment = patient->get_treatment_by_index(i);
         if (!treatment->is_scheduled() && treatment->schedule().contains(time) && nurse.can_do(treatment->type()))
         {
             return treatment;
@@ -73,7 +63,7 @@ Appointment* Algorithm::nearest_appointment(Nurse const& nurse)
                 Time end_time = arrival + treatment->type().duration();
                 if (end_time <= nurse.timetable().end_time())
                 {
-                    appointment = new Appointment(patient->location(), TimeInterval(arrival, end_time), treatment);
+                    appointment = new Appointment(nurse.id(), patient, treatment->id(), TimeInterval(arrival, end_time));
                     min_distance = dist;
                 }
             }
@@ -85,9 +75,6 @@ Appointment* Algorithm::nearest_appointment(Nurse const& nurse)
 
 void Algorithm::run()
 {
-    // Initialize appointments
-    initialize_appointments();
-
     // Find appointments
     find_appointments();
 
@@ -99,21 +86,27 @@ std::string Algorithm::to_string() const
 {
     std::string str = "*** Appointments ***";
 
-    for (int i = 0, len_i = appointments_size(); i < len_i; ++i)
+    for (int i = 0, len_nurses = m_inputs->nurses_size(); i < len_nurses; ++i)
     {
-        // Convert nurse id to string
-        std::stringstream sstream;
-        sstream << m_inputs->nurses()[i].id();
-        std::string id = sstream.str();
-
-        str = str + "\n\nNurse ID " + id + ": [";
-        for (int j = 0, len_j = m_appointments[i].size(); j < len_j; ++j)
+        unsigned int nurse_id = m_inputs->nurses()[i].id();
+        str = str + "\n\nNurse id " + int_to_string(nurse_id) + ": [";
+        bool first = true;
+        for (int j = 0, len_appointments = appointments_size(); j < len_appointments; ++j)
         {
-            str = str + "\n" + m_appointments[i][j]->to_string();
-            if (j < len_j - 1)
+            Appointment *appointment = m_appointments[j];
+            if (appointment->nurse_id() == nurse_id)
             {
-                str = str + ",";
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    str = str + ",";
+                }
+                str = str + "\n" + appointment->to_string();
             }
+
         }
         str = str + " ]";
     }

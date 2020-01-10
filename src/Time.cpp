@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <math.h> // round
+#include "Utils.h"
 #include "Point.h"
 
 const short Time::MINUTES_MAX = 24 * 60;
@@ -35,12 +36,8 @@ std::string Time::to_string() const
     short minutes = to_minutes();
 
     // Convert hours and minutes to string
-    std::stringstream sstream_h;
-    sstream_h << to_hours();
-    std::string h = sstream_h.str();
-    std::stringstream sstream_m;
-    sstream_m << minutes;
-    std::string m = sstream_m.str();
+    std::string h = int_to_string(to_hours());
+    std::string m = int_to_string(minutes);
 
     if (minutes < 10)
     {

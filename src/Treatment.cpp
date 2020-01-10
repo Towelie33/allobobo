@@ -1,11 +1,12 @@
 #include "Treatment.h"
 #include <iostream>
 #include <string>
+#include "Utils.h"
 #include "TreatmentType.h"
 #include "TimeInterval.h"
 
-Treatment::Treatment(TreatmentType type, TimeInterval schedule)
-    :m_type(type), m_schedule(schedule), m_is_scheduled(false)
+Treatment::Treatment(unsigned int id, TreatmentType type, TimeInterval schedule)
+    :m_id(id), m_type(type), m_schedule(schedule), m_is_scheduled(false)
 {}
 
 std::string Treatment::to_string() const
@@ -17,7 +18,8 @@ std::string Treatment::to_string() const
         is_scheduled = "true";
     }
 
-    return "{ type: " + m_type.to_string()
+    return "{ _id: " + int_to_string(m_id)
+         + ", type: " + m_type.to_string()
          + ", schedule: " + m_schedule.to_string()
          + ", is scheduled: " + is_scheduled
          + " }";
@@ -25,9 +27,7 @@ std::string Treatment::to_string() const
 
 bool operator==(Treatment const& treatment1, Treatment const& treatment2)
 {
-    return (treatment1.type() == treatment2.type())
-        && (treatment1.schedule() == treatment2.schedule())
-        && (treatment1.is_scheduled() == treatment2.is_scheduled());
+    return (treatment1.id() == treatment2.id());
 }
 
 std::ostream& operator<<(std::ostream &flux, Treatment const& treatment)

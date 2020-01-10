@@ -12,18 +12,20 @@ class Patient
 {
     public:
 
-        Patient();
-        Patient(Point location, std::vector<Treatment> treatments);
-        Patient(Point location, Treatment treatment);
-        Patient(Point location, TreatmentType type);
+        Patient(unsigned int id);
+        Patient(unsigned int id, Point location, std::vector<Treatment> treatments);
+        Patient(unsigned int id, Point location, Treatment treatment);
+        Patient(unsigned int id, Point location, unsigned int treatment_id, TreatmentType type);
 
+        unsigned int id() const { return m_id; }
         Point location() const { return m_location; }
         std::vector<Treatment> treatments() const { return m_treatments; }
 
         int treatments_size() const { return m_treatments.size(); }
         int treatments_left() const;
 
-        Treatment* get_treatment(int i);
+        Treatment* get_treatment_by_index(int i);
+        Treatment* get_treatment_by_id(unsigned int id);
         void add_treatment(Treatment treatment);
 
         void reset();
@@ -34,7 +36,8 @@ class Patient
 
     private:
 
-        Point m_location;
+        const unsigned int m_id;
+        const Point m_location;
         std::vector<Treatment> m_treatments;
 };
 

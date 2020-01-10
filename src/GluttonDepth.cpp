@@ -42,7 +42,7 @@ void GluttonDepth::find_appointments()
             --appointments_left;
 
             // Add appointment in the list
-            m_appointments[nurse->index()].push_back(appointment);
+            m_appointments.push_back(appointment);
 
             // Update nurse
             nurse->position(appointment->location());
