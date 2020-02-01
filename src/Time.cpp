@@ -1,10 +1,11 @@
-#include "Time.h"
+#include "../include/Time.h"
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <algorithm> // std::min
 #include <math.h> // round
-#include "Utils.h"
-#include "Point.h"
+#include "../include/Utils.h"
+#include "../include/Point.h"
 
 const short Time::MINUTES_MAX = 24 * 60;
 

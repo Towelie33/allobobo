@@ -1,7 +1,8 @@
-#include "TimeInterval.h"
+#include "../include/TimeInterval.h"
 #include <iostream>
 #include <string>
-#include "Time.h"
+#include "../include/Time.h"
+//#include <cpprest/json.h>
 
 TimeInterval TimeInterval::FULL_DAY = TimeInterval(0, 24 * 60);
 
@@ -10,13 +11,17 @@ TimeInterval::TimeInterval(Time start_time, Time end_time)
 {}
 
 TimeInterval::TimeInterval(short start_time, short end_time)
-    :m_start_time(Time(start_time)), m_end_time(Time(end_time))
+    :m_start_time(start_time), m_end_time(end_time)
 {}
 
 TimeInterval::TimeInterval(Time start_time, short duration)
-    :m_start_time(Time(start_time)), m_end_time(Time(start_time.minutes() + duration))
+    :m_start_time(start_time), m_end_time(start_time.minutes() + duration)
 {}
-
+/*
+TimeInterval::TimeInterval(web::json::object const& jobject)
+	:m_start_time(jobject.at(L"start").as_integer()), m_end_time(jobject.at(L"end").as_integer())
+{}
+*/
 bool TimeInterval::contains(Time const& time) const
 {
     return (m_start_time <= time) && (time <= m_end_time);

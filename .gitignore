@@ -1,5 +1,14 @@
 bin
+Debug
 obj
+packages
+x64
+AlloBobo
 AlloBobo.cbp
 AlloBobo.depend
 AlloBobo.layout
+Allobobo.sln
+Allobobo.vcxproj
+Allobobo.vcxproj.filters
+Allobobo.vcxproj.user
+packages.config

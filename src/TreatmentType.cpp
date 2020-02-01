@@ -1,17 +1,22 @@
-#include "TreatmentType.h"
+#include "../include/TreatmentType.h"
 #include <iostream>
 #include <string>
-#include "Utils.h"
-#include "Time.h"
+#include "../include/Utils.h"
+#include "../include/Time.h"
+//#include <cpprest/json.h>
 
 TreatmentType::TreatmentType(unsigned int id, Time duration)
     :m_id(id), m_duration(duration)
 {}
 
 TreatmentType::TreatmentType(unsigned int id, short duration)
-    :m_id(id), m_duration(Time(duration))
+    :m_id(id), m_duration(duration)
 {}
-
+/*
+TreatmentType::TreatmentType(web::json::object const& jobject)
+	:m_id(jobject.at(L"_id").as_integer()), m_duration(Time(jobject.at(L"duration").as_integer()))
+{}
+*/
 std::string TreatmentType::to_string() const
 {
     return "{ _id: " + int_to_string(m_id)

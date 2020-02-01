@@ -7,6 +7,7 @@
 #include "Point.h"
 #include "TreatmentType.h"
 #include "Treatment.h"
+//#include <cpprest/json.h>
 
 class Patient
 {
@@ -15,7 +16,8 @@ class Patient
         Patient(unsigned int id);
         Patient(unsigned int id, Point location, std::vector<Treatment> treatments);
         Patient(unsigned int id, Point location, Treatment treatment);
-        Patient(unsigned int id, Point location, unsigned int treatment_id, TreatmentType type);
+        Patient(unsigned int id, Point location, unsigned int treatment_id, unsigned int type_id);
+	//Patient(web::json::object const& jobject);
 
         unsigned int id() const { return m_id; }
         Point location() const { return m_location; }

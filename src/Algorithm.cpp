@@ -1,21 +1,22 @@
-#include "Algorithm.h"
+#include "../include/Algorithm.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <sstream>
-#include "Utils.h"
-#include "Point.h"
-#include "Time.h"
-#include "TimeInterval.h"
-#include "TreatmentType.h"
-#include "Treatment.h"
-#include "Patient.h"
-#include "Nurse.h"
-#include "Appointment.h"
-#include "Inputs.h"
+#include "../include/Utils.h"
+#include "../include/Point.h"
+#include "../include/Time.h"
+#include "../include/TimeInterval.h"
+#include "../include/TreatmentType.h"
+#include "../include/Treatment.h"
+#include "../include/Patient.h"
+#include "../include/Nurse.h"
+#include "../include/Appointment.h"
+#include "../include/Inputs.h"
+//#include <cpprest/json.h>
 
-Algorithm::Algorithm(Inputs *inputs, short speed)
-    :m_inputs(inputs), m_speed(speed)
+Algorithm::Algorithm(Inputs *inputs)
+    :m_inputs(inputs)
 {}
 
 Algorithm::~Algorithm()
@@ -32,45 +33,9 @@ void Algorithm::reset_inputs() const
     m_inputs->reset();
 }
 
-Treatment* Algorithm::is_available(Patient *patient, Time const& time, Nurse const& nurse) const
+Time Algorithm::duration(unsigned int type_id) const
 {
-    for (int i = 0, len = patient->treatments_size(); i < len; ++i)
-    {
-        Treatment *treatment = patient->get_treatment_by_index(i);
-        if (!treatment->is_scheduled() && treatment->schedule().contains(time) && nurse.can_do(treatment->type()))
-        {
-            return treatment;
-        }
-    }
-    return nullptr;
-}
-
-Appointment* Algorithm::nearest_appointment(Nurse const& nurse)
-{
-    Appointment *appointment = nullptr;
-    long min_distance = -1;
-
-    for (int i = 0, len = m_inputs->patients_size(); i < len; ++i)
-    {
-        Patient *patient = m_inputs->get_patient(i);
-        long dist = distance(nurse.position(), patient->location());
-        if (dist < min_distance || min_distance < 0)
-        {
-            Time arrival = nurse.available() + time_to_go(dist, m_speed);
-            Treatment *treatment = is_available(patient, arrival, nurse);
-            if (treatment != nullptr)
-            {
-                Time end_time = arrival + treatment->type().duration();
-                if (end_time <= nurse.timetable().end_time())
-                {
-                    appointment = new Appointment(nurse.id(), patient, treatment->id(), TimeInterval(arrival, end_time));
-                    min_distance = dist;
-                }
-            }
-        }
-    }
-
-    return appointment;
+	return m_inputs->get_type_by_id(type_id)->duration();
 }
 
 void Algorithm::run()
@@ -81,7 +46,20 @@ void Algorithm::run()
     // Reset inputs
     reset_inputs();
 }
-
+/*
+web::json::value Algorithm::to_json() const
+{
+	web::json::value jvalue = web::json::value::object();
+	int len = appointments_size();
+	web::json::value appointments = web::json::value::array(len);
+	for (int i = 0; i < len; ++i)
+	{
+		appointments[i] = m_appointments[i]->to_json();
+	}
+	jvalue[L"appointments"] = appointments;
+	return jvalue;
+}
+*/
 std::string Algorithm::to_string() const
 {
     std::string str = "*** Appointments ***";
@@ -112,6 +90,47 @@ std::string Algorithm::to_string() const
     }
 
     return str;
+}
+
+Treatment* Algorithm::is_available(Patient *patient, Time const& time, Nurse const& nurse) const
+{
+    for (int i = 0, len = patient->treatments_size(); i < len; ++i)
+    {
+        Treatment *treatment = patient->get_treatment_by_index(i);
+        if (!treatment->is_scheduled() && treatment->schedule().contains(time) && nurse.can_do(treatment->type_id()))
+        {
+            return treatment;
+        }
+    }
+    return nullptr;
+}
+
+Appointment* Algorithm::nearest_appointment(Nurse const& nurse)
+{
+    Appointment *appointment = nullptr;
+    long min_distance = -1;
+
+    for (int i = 0, len = m_inputs->patients_size(); i < len; ++i)
+    {
+        Patient *patient = m_inputs->get_patient(i);
+        long dist = distance(nurse.position(), patient->location());
+        if (dist < min_distance || min_distance < 0)
+        {
+            Time arrival = nurse.available() + time_to_go(dist, m_inputs->car_speed());
+            Treatment *treatment = is_available(patient, arrival, nurse);
+            if (treatment != nullptr)
+            {
+                Time end_time = arrival + duration(treatment->type_id());
+                if (end_time <= nurse.timetable().end_time())
+                {
+                    appointment = new Appointment(nurse.id(), patient, treatment->id(), TimeInterval(arrival, end_time));
+                    min_distance = dist;
+                }
+            }
+        }
+    }
+
+    return appointment;
 }
 
 std::ostream& operator<<(std::ostream &flux, Algorithm const& algo)

@@ -1,15 +1,16 @@
-#include "Patient.h"
+#include "../include/Patient.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <algorithm>
-#include "Utils.h"
-#include "Point.h"
-#include "TreatmentType.h"
-#include "Treatment.h"
+#include "../include/Utils.h"
+#include "../include/Point.h"
+#include "../include/TreatmentType.h"
+#include "../include/Treatment.h"
+//#include <cpprest/json.h>
 
 Patient::Patient(unsigned int id)
-    :m_id(id), m_location(Point())
+    :m_id(id), m_location()
 {}
 
 Patient::Patient(unsigned int id, Point location, std::vector<Treatment> treatments)
@@ -22,12 +23,23 @@ Patient::Patient(unsigned int id, Point location, Treatment treatment)
     m_treatments.push_back(treatment);
 }
 
-Patient::Patient(unsigned int id, Point location, unsigned int treatment_id, TreatmentType type)
+Patient::Patient(unsigned int id, Point location, unsigned int treatment_id, unsigned int type_id)
     :m_id(id), m_location(location)
 {
-    m_treatments.push_back(Treatment(treatment_id, type, TimeInterval::GET_FULL_DAY()));
+    m_treatments.push_back(Treatment(treatment_id, type_id, TimeInterval::GET_FULL_DAY()));
 }
-
+/*
+Patient::Patient(web::json::object const& jobject)
+	:m_id(jobject.at(L"_id").as_integer()), m_location(jobject.at(L"location").as_object())
+{
+	// Set treatments
+	web::json::array treatments = jobject.at(L"treatments").as_array();
+	for (auto const& treatment: treatments)
+	{
+		m_treatments.push_back(treatment.as_object());
+	}
+}
+*/
 int Patient::treatments_left() const
 {
     int res = 0;
@@ -83,7 +95,7 @@ std::string Patient::treatments_to_string() const
     for (int i = 0, len = treatments_size(); i < len; ++i)
     {
         str = str + "{ _id: " + int_to_string(m_treatments[i].id())
-            + ", type id: " + int_to_string(m_treatments[i].type().id())
+            + ", type id: " + int_to_string(m_treatments[i].type_id())
             + ", schedule: " + m_treatments[i].schedule().to_string() + " }";
         if (i < len - 1)
         {

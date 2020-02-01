@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+//#include <cpprest/json.h>
 
 class Point
 {
@@ -10,6 +11,7 @@ class Point
 
         Point();
         Point(int pos_x, int pos_y);
+	//Point(web::json::object const& jobject);
 
         static Point GET_ORIGIN() { return ORIGIN; }
         static void SET_ORIGIN(Point val) { ORIGIN = val; }

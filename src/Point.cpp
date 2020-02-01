@@ -1,8 +1,9 @@
-#include "Point.h"
+#include "../include/Point.h"
 #include <iostream>
 #include <string>
 #include <sstream>
-#include "Utils.h"
+#include "../include/Utils.h"
+//#include <cpprest/json.h>
 
 Point Point::ORIGIN = Point();
 
@@ -13,7 +14,11 @@ Point::Point()
 Point::Point(int pos_x, int pos_y)
     :m_pos_x(pos_x), m_pos_y(pos_y)
 {}
-
+/*
+Point::Point(web::json::object const& jobject)
+	:m_pos_x(jobject.at(L"x").as_integer()), m_pos_y(jobject.at(L"y").as_integer())
+{}
+*/
 std::string Point::to_string() const
 {
     return "(" + int_to_string(m_pos_x) + ", " + int_to_string(m_pos_y) + ")";

@@ -7,6 +7,7 @@
 #include "TimeInterval.h"
 #include "Treatment.h"
 #include "Patient.h"
+//#include <cpprest/json.h>
 
 class Appointment
 {
@@ -23,6 +24,7 @@ class Appointment
         Point location() const { return m_patient->location(); }
         Treatment* treatment() { return m_patient->get_treatment_by_id(m_treatment_id); }
 
+		//web::json::value to_json() const;
         std::string to_string() const;
 
 

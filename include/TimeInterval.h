@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Time.h"
+//#include <cpprest/json.h>
 
 class TimeInterval
 {
@@ -12,6 +13,7 @@ class TimeInterval
         TimeInterval(Time start_time, Time end_time);
         TimeInterval(short start_time, short end_time);
         TimeInterval(Time start_time, short duration);
+	//TimeInterval(web::json::object const& jobject);
 
         static TimeInterval GET_FULL_DAY() { return FULL_DAY; }
         static void SET_FULL_DAY(TimeInterval val) { FULL_DAY = val; }

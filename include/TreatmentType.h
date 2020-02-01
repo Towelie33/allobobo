@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include "Time.h"
+//#include <cpprest/json.h>
 
 class TreatmentType
 {
@@ -11,6 +12,7 @@ class TreatmentType
 
         TreatmentType(unsigned int id, Time duration);
         TreatmentType(unsigned int id, short duration);
+	//TreatmentType(web::json::object const& jobject);
 
         unsigned int id() const { return m_id; }
         Time duration() const { return m_duration; }

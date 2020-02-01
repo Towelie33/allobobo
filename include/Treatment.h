@@ -5,15 +5,17 @@
 #include <string>
 #include "TreatmentType.h"
 #include "TimeInterval.h"
+//#include <cpprest/json.h>
 
 class Treatment
 {
     public:
 
-        Treatment(unsigned int id, TreatmentType type, TimeInterval schedule = TimeInterval::GET_FULL_DAY());
+        Treatment(unsigned int id, unsigned int type_id, TimeInterval schedule = TimeInterval::GET_FULL_DAY());
+	//Treatment(web::json::object const& jobject);
 
         unsigned int id() const { return m_id; }
-        TreatmentType type() const { return m_type; }
+	unsigned int type_id() const { return m_type_id; }
         TimeInterval schedule() const { return m_schedule; }
         bool is_scheduled() const { return m_is_scheduled; }
         void is_scheduled(bool val) { m_is_scheduled = val; }
@@ -24,7 +26,7 @@ class Treatment
     private:
 
         const unsigned int m_id;
-        const TreatmentType m_type;
+        const unsigned int m_type_id;
         const TimeInterval m_schedule;
         bool m_is_scheduled;
 };

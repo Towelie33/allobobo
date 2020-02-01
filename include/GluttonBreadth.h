@@ -8,8 +8,11 @@ class GluttonBreadth : public Algorithm
 {
     public:
 
-        GluttonBreadth(Inputs *inputs, short speed);
+        GluttonBreadth(Inputs *inputs);
 
+
+    private:
+    
         virtual void find_appointments();
 };
 

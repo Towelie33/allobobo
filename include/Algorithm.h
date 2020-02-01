@@ -12,12 +12,13 @@
 #include "Nurse.h"
 #include "Appointment.h"
 #include "Inputs.h"
+//#include <cpprest/json.h>
 
 class Algorithm
 {
     public:
 
-        Algorithm(Inputs *inputs, short speed);
+        Algorithm(Inputs *inputs);
 
         virtual ~Algorithm();
 
@@ -25,26 +26,26 @@ class Algorithm
 
         void reset_inputs() const;
 
-        Treatment* is_available(Patient* patient, Time const& time, Nurse const& nurse) const;
-        Appointment* nearest_appointment(Nurse const& nurse);
+		Time duration(unsigned int type_id) const;
 
         void run();
 
-        virtual void find_appointments() = 0;
-
+		//web::json::value to_json() const;
         std::string to_string() const;
 
 
     protected:
+
+        Treatment* is_available(Patient* patient, Time const& time, Nurse const& nurse) const;
+        Appointment* nearest_appointment(Nurse const& nurse);
+
+        virtual void find_appointments() = 0;
 
         // The inputs
         Inputs *m_inputs;
 
         // The output
         std::vector<Appointment*> m_appointments;
-
-        // The average car speed
-        const short m_speed;
 };
 
 std::ostream& operator<<(std::ostream &flux, Algorithm const& algo);

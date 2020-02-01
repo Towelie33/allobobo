@@ -1,19 +1,19 @@
-#include "GluttonDepth.h"
+#include "../include/GluttonDepth.h"
 #include <vector>
 #include <queue>
-#include "Point.h"
-#include "Time.h"
-#include "TimeInterval.h"
-#include "TreatmentType.h"
-#include "Treatment.h"
-#include "Nurse.h"
-#include "Patient.h"
-#include "Appointment.h"
-#include "Inputs.h"
-#include "Algorithm.h"
+#include "../include/Point.h"
+#include "../include/Time.h"
+#include "../include/TimeInterval.h"
+#include "../include/TreatmentType.h"
+#include "../include/Treatment.h"
+#include "../include/Nurse.h"
+#include "../include/Patient.h"
+#include "../include/Appointment.h"
+#include "../include/Inputs.h"
+#include "../include/Algorithm.h"
 
-GluttonDepth::GluttonDepth(Inputs *inputs, short speed)
-    :Algorithm(inputs, speed)
+GluttonDepth::GluttonDepth(Inputs *inputs)
+    :Algorithm(inputs)
 {}
 
 void GluttonDepth::find_appointments()
