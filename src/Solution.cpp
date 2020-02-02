@@ -279,7 +279,7 @@ void Solution::mutate(double rate)
 		for (int j = 0; j < m_treatments_per_nurse; ++j)
 		{
 			// Check if there is a mutation
-			if (random() < rate)
+			if (random01() < rate)
 			{
 				// Swap the value with a random value in the code
 				int k = random(0, m_nurses - 1);

@@ -621,7 +621,7 @@ void Genetic::selection(std::vector<Solution> &new_population, int method)
             std::vector<Solution*> selected_solutions(m_population_size / 2);
             while (counter < m_population_size / 2)
             {
-                if (random() < proba[range[index % m_population_size]])
+                if (random01() < proba[range[index % m_population_size]])
                 {
                     selected_solutions[counter] = &m_population[range[index % m_population_size]];
                     ++counter;

@@ -18,7 +18,7 @@ std::string int_to_string(int i);
  * Generate a random double >= 0 and < 1
  * @return The random double
  */
-double random();
+double random01();
 
 /**
  * Generate a random integer >= inf and <= sup
