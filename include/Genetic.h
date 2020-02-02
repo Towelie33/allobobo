@@ -12,7 +12,7 @@ class Genetic : public Algorithm
 {
     public:
 
-        Genetic(Inputs *inputs, int population_size = 100, double crossover_rate = 0.5d, double mutation_rate = 0.006d, int max_generations = 10000);
+        Genetic(Inputs *inputs, int population_size = 100, double crossover_rate = 0.5, double mutation_rate = 0.006, int max_generations = 10000);
 
         int nurses() const { return m_inputs->nurses_size(); }
         int treatments() const { return m_inputs->treatments_size(); }

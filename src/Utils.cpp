@@ -19,7 +19,7 @@ std::string int_to_string(int i)
     return sstream.str();
 }
 
-double random()
+double random01()
 {
     return ((double) rand()) / ((double) RAND_MAX);
 }
