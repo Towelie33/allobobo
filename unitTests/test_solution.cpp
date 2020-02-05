@@ -28,8 +28,7 @@ void tester_serial_walk(std::vector<int> array, int dist1, int dist2, Solution s
 }
 
 
-TEST_F(testSolution, longest_serial_walk_distance)
-{
+TEST_F(testSolution, longest_serial_walk_distance){
     Solution solution1 = Solution(1, 5, {0, 1, 2, 3, 4});
 
     tester_serial_walk({0, 0, 0, 0}, 0, 5, solution1);
@@ -38,7 +37,19 @@ TEST_F(testSolution, longest_serial_walk_distance)
     tester_serial_walk({1, 1, 1, 1}, 0, 1, solution1);
 
     Solution solution2 = Solution(1, 2, {1, 2});
-    tester({0}, 0, 2, solution2);
+    tester_serial_walk({0}, 0, 2, solution2);
+}
+
+
+TEST_F(testSolution, longest_serial_walk){
+
+    std::pair<int, int> point_0 = solution.longest_serial_walk_distance(0);
+    std::pair<int, int> point_1 = solution.longest_serial_walk_distance(1);
+
+    ASSERT_EQ(point_0.first, 0) << "Start point nurse 0";
+    ASSERT_EQ(point_0.second, 2) << "End point nurse 0";
+    ASSERT_EQ(point_1.first, 0) << "End point nurse 1";
+    ASSERT_EQ(point_1.second, 2) << "End point nurse 1";
 }
 
 
@@ -91,8 +102,6 @@ TEST_F(testSolution, mutate){
     EXPECT_EQ(sol11, solution.get(1, 1));
     EXPECT_EQ(solution.fitness(0), -1) << "Fitness nurse 0 not reset to -1";
     EXPECT_EQ(solution.fitness(1), -1) << "Fitness nurse 1 not reset to -1";
-
-
 }
 
 
@@ -123,17 +132,3 @@ TEST_F(testSolution, fitness){
     solution.fitness(1, -1);
     ASSERT_EQ(solution.fitness(), -1);
 }
-
-
-TEST_F(testSolution, longest_serial_walk_distance){
-
-    std::pair<int, int> point_0 = solution.longest_serial_walk_distance(0);
-    std::pair<int, int> point_1 = solution.longest_serial_walk_distance(1);
-
-    ASSERT_EQ(point_0.first, 0) << "Start point nurse 0";
-    ASSERT_EQ(point_0.second, 2) << "End point nurse 0";
-    ASSERT_EQ(point_1.first, 0) << "End point nurse 1";
-    ASSERT_EQ(point_1.second, 2) << "End point nurse 1";
-}
-
-

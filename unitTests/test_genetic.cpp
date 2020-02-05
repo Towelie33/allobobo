@@ -41,8 +41,34 @@ struct GeneticTest : testing::Test
     }
 };
 
-TEST(tests_algo_genetic, generate_population){
-//    generate_population();
+void test_generate_population(int pop_size, int nurses, int treatments_per_nurse, Genetic gen)
+{
+    std::vector<Solution> pop = gen.generate_population(pop_size, nurses, treatments_per_nurse);
+
+    ASSERT_EQ(pop.size(), pop_size);
+    ASSERT_EQ(pop[0].nurses(), nurses);
+    ASSERT_EQ(pop[0].treatments_per_nurse(), treatments_per_nurse);
+    std::cout << pop[0].code_to_string() << "..." << std::endl;
+    if (pop_size > 1){
+        ASSERT_NE(pop[0].code_to_string(), pop[1].code_to_string());
+    }
+
+    //Test use of random
+    std::vector<Solution> pop2 = gen.generate_population(pop_size, nurses, treatments_per_nurse);
+    if (pop_size > 1){
+        EXPECT_NE(pop[0].code_to_string(), pop2[0].code_to_string());
+        //Size matrix and values
+        ASSERT_LE(pop[0].get(nurses - 1, treatments_per_nurse -1),
+                nurses * treatments_per_nurse -1);
+    }
+}
+
+TEST_F(GeneticTest, generate_population){
+    Genetic gen(&inputs1);
+
+    test_generate_population(3, 2, 4, gen);
+    test_generate_population(8, 10, 10, gen);
+    test_generate_population(1, 1, 1, gen);
 }
 
 TEST_F(GeneticTest, update_best_solution){
@@ -67,21 +93,25 @@ TEST_F(GeneticTest, update_best_solution){
 class MockSolution : public Solution {
 
     public:
-        MockSolution() : Solution(2, 2, {0, 2, 1, 3}){}
+        MockSolution(int nurses, int treatment, std::vector<int> code) :
+            Solution{nurses, treatment, code}{}
 
-        MOCK_METHOD(void, mutate, (int mutation_rate), ());
-
+            MOCK_METHOD(void, mutate, (double rate), ());
 };
 
+using testing::_;
+
 TEST_F(GeneticTest, mutation){
+    Inputs inputs1 = Inputs(CAR_SPEED, WALK_SPEED, MIN_CAR_DIST);
     Genetic gen(&inputs1, 4);
 
-    MockSolution sol1;
-    MockSolution sol2;
+    MockSolution sol1(2, 2, {0, 2, 1, 3});
+    MockSolution sol2(2, 2, {0, 2, 1, 3});
 
     std::vector<Solution> new_pop = {sol1, sol2, sol2, sol2};
-    EXPECT_CALL(sol1, mutate(testing::Ge(0)));
-    EXPECT_CALL(sol2, mutate(testing::_));
+//    EXPECT_CALL(sol1, mutate(testing::Ge(0)));
+//    EXPECT_CALL(sol2, mutate(testing::_));
+//    sol1.mutate(0.006);
     gen.mutation(new_pop);
 }
 
