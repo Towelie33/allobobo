@@ -12,3 +12,6 @@ Allobobo.vcxproj
 Allobobo.vcxproj.filters
 Allobobo.vcxproj.user
 packages.config
+*.o
+Makefile
+*gch
