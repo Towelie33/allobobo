@@ -3,48 +3,63 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 #include "../include/Utils.h"
 #include "../include/Nurse.h"
 #include "../include/Patient.h"
 //#include <cpprest/json.h>
 
+const int Inputs::MIN_TYPES = 1;
+const int Inputs::MIN_NURSES = 1;
+const int Inputs::MIN_PATIENTS = 1;
+
 Inputs::Inputs(int car_speed, int walk_speed, int min_car_dist)
     :m_car_speed(car_speed), m_walk_speed(walk_speed), m_min_car_dist(min_car_dist)
 {}
 
-Inputs::Inputs(int car_speed, int walk_speed, int min_car_dist,
-               std::vector<TreatmentType> types, std::vector<Nurse> nurses, std::vector<Patient> patients)
+Inputs::Inputs(int car_speed, int walk_speed, int min_car_dist, std::vector<TreatmentType> types,
+			   std::vector<Nurse> nurses, std::vector<Patient> patients)
     :m_car_speed(car_speed), m_walk_speed(walk_speed), m_min_car_dist(min_car_dist),
     m_types(types), m_nurses(nurses), m_patients(patients)
 {}
 /*
-Inputs::Inputs(web::json::object const& jobject)
-	:m_car_speed(jobject.at(L"carSpeed").as_integer()), 
-	m_walk_speed(jobject.at(L"walkSpeed").as_integer()), 
-	m_min_car_dist(jobject.at(L"minCarDist").as_integer())
+Inputs::Inputs(web::json::value const& jvalue)
+	:m_car_speed(jvalue.at(L"carSpeed").as_integer()),
+	m_walk_speed(jvalue.at(L"walkSpeed").as_integer()),
+	m_min_car_dist(jvalue.at(L"minCarDist").as_integer())
 {
 	// Set treatment types
-	web::json::array types = jobject.at(L"treatmentTypes").as_array();
-	for (auto const& type: types)
+	web::json::array types = jvalue.at(L"treatmentTypes").as_array();
+	for (web::json::value const& type: types)
 	{
-		m_types.push_back(TreatmentType(type.as_object()));
+		m_types.push_back(type);
 	}
 
 	// Set nurses
-	web::json::array nurses = jobject.at(L"nurses").as_array();
-	for (auto const& nurse: nurses)
+	web::json::array nurses = jvalue.at(L"nurses").as_array();
+	for (web::json::value const& nurse: nurses)
 	{
-		m_nurses.push_back(Nurse(nurse.as_object()));
+		m_nurses.push_back(nurse);
 	}
 
 	// Set patients
-	web::json::array patients = jobject.at(L"patients").as_array();
-	for (auto const& patient: patients)
+	web::json::array patients = jvalue.at(L"patients").as_array();
+	for (web::json::value const& patient: patients)
 	{
-		m_patients.push_back(Patient(patient.as_object()));
+		m_patients.push_back(patient);
 	}
 }
 */
+int Inputs::patients_per_nurse() const
+{
+    int nurses = nurses_size();
+    if (nurses == 0)
+    {
+        return 0;
+    }
+    return patients_size() / nurses;
+}
+
 TreatmentType* Inputs::get_type_by_index(int i)
 {
     if (i >= 0 && i < types_size())
@@ -82,7 +97,7 @@ Nurse* Inputs::get_nurse(int i)
 
 void Inputs::add_nurse(Nurse nurse)
 {
-    m_nurses.push_back(nurse);
+	m_nurses.push_back(nurse);
 }
 
 Patient* Inputs::get_patient(int i)
@@ -119,14 +134,61 @@ int Inputs::treatments_left() const
     return res;
 }
 
-int Inputs::treatments_per_nurse() const
+void Inputs::set_patient_bonds()
 {
-    int nurses = nurses_size();
-    if (nurses == 0)
+    // Reset bonds
+	for (int i = 0; i < patients_size(); ++i)
+	{
+		m_patients[i].bonds(0);
+	}
+
+	// Calculate each patient bonds
+    for (int i = 0; i < patients_size() - 1; ++i)
     {
-        return 0;
+		for (int j = i + 1; j < patients_size(); ++j)
+        {
+            if (distance(m_patients[i].location(), m_patients[j].location()) <= m_min_car_dist)
+            {
+				m_patients[i].bonds(m_patients[i].bonds() + 1);
+                m_patients[j].bonds(m_patients[j].bonds() + 1);
+            }
+        }
     }
-    return treatments_size() / nurses;
+}
+
+void Inputs::set_distances()
+{
+    m_distances = std::vector<std::vector<int> >(patients_size());
+    for (int i = 0; i < patients_size(); ++i)
+    {
+        std::vector<int> line(patients_size());
+        line[i] = 0;
+        m_distances[i] = line;
+    }
+    for (int i = 0; i < patients_size() - 1; ++i)
+    {
+        for (int j = i + 1; j < patients_size(); ++j)
+        {
+            int dist = distance(m_patients[i].location(), m_patients[j].location());
+            m_distances[i][j] = dist;
+            m_distances[j][i] = dist;
+        }
+    }
+}
+
+void Inputs::initialize()
+{
+	// Sort nurses according to their skills
+	std::sort(m_nurses.begin(), m_nurses.end(), CompareNurseSkills());
+
+	// Set patient bonds
+	set_patient_bonds();
+
+	// Sort patients according to their bonds
+	std::sort(m_patients.begin(), m_patients.end());
+
+	// Set distances
+	set_distances();
 }
 
 void Inputs::reset()
@@ -187,9 +249,99 @@ std::string Inputs::to_string() const
 
     return str;
 }
-
-std::ostream& operator<<(std::ostream &flux, Inputs const& inputs)
+/*
+bool Inputs::is_valid_json(web::json::value const& jvalue)
 {
-    std::cout << inputs.to_string();
-    return flux;
+	// Check fields
+	bool has_fields = jvalue.has_integer_field(L"carSpeed")
+				   && jvalue.has_integer_field(L"walkSpeed")
+				   && jvalue.has_integer_field(L"minCarDist")
+				   && jvalue.has_array_field(L"treatmentTypes")
+				   && jvalue.has_array_field(L"nurses")
+				   && jvalue.has_array_field(L"patients");
+	if (!has_fields)
+	{
+		return false;
+	}
+	if (jvalue.at(L"carSpeed").as_integer() <= 0 || jvalue.at(L"walkSpeed").as_integer() <= 0 || jvalue.at(L"minCarDist").as_integer() < 0)
+	{
+		return false;
+	}
+
+	// Check treatmentTypes array
+	web::json::array jarray = jvalue.at(L"treatmentTypes").as_array();
+	int jarray_size = jarray.size();
+	if (jarray_size < MIN_TYPES)
+	{
+		return false;
+	}
+	std::vector<unsigned int> type_ids;
+	for (int i = 0; i < jarray_size; ++i)
+	{
+		web::json::value jval = jarray.at(i);
+		if (!jval.is_object() || !TreatmentType::is_valid_json(jval))
+		{
+			return false;
+		}
+		unsigned int type_id = jval.at(L"_id").as_integer();
+		if (find_element<unsigned int>(type_ids, type_id))
+		{
+			return false;
+		}
+		type_ids.push_back(type_id);
+	}
+
+	// Check nurses array
+	jarray = jvalue.at(L"nurses").as_array();
+	jarray_size = jarray.size();
+	if (jarray_size < MIN_NURSES)
+	{
+		return false;
+	}
+	std::vector<unsigned int> nurse_ids;
+	for (int i = 0; i < jarray_size; ++i)
+	{
+		web::json::value jval = jarray.at(i);
+		if (!jval.is_object() || !Nurse::is_valid_json(jval))
+		{
+			return false;
+		}
+		unsigned int nurse_id = jval.at(L"_id").as_integer();
+		if (find_element<unsigned int>(nurse_ids, nurse_id))
+		{
+			return false;
+		}
+		nurse_ids.push_back(nurse_id);
+	}
+
+	// Check patients array
+	jarray = jvalue.at(L"patients").as_array();
+	jarray_size = jarray.size();
+	if (jarray_size < MIN_PATIENTS)
+	{
+		return false;
+	}
+	std::vector<unsigned int> patient_ids;
+	for (int i = 0; i < jarray_size; ++i)
+	{
+		web::json::value jval = jarray.at(i);
+		if (!jval.is_object() || !Patient::is_valid_json(jval, type_ids))
+		{
+			return false;
+		}
+		unsigned int patient_id = jval.at(L"_id").as_integer();
+		if (find_element<unsigned int>(patient_ids, patient_id))
+		{
+			return false;
+		}
+		patient_ids.push_back(patient_id);
+	}
+
+	return true;
+}
+*/
+std::ostream& operator<<(std::ostream &out, Inputs const& inputs)
+{
+    out << inputs.to_string();
+    return out;
 }

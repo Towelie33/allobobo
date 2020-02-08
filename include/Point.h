@@ -11,7 +11,7 @@ class Point
 
         Point();
         Point(int pos_x, int pos_y);
-	//Point(web::json::object const& jobject);
+        //Point(web::json::value const& jvalue);
 
         static Point GET_ORIGIN() { return ORIGIN; }
         static void SET_ORIGIN(Point val) { ORIGIN = val; }
@@ -20,6 +20,8 @@ class Point
         int pos_y() const { return m_pos_y; }
 
         std::string to_string() const;
+
+		//static bool is_valid_json(web::json::value const& jvalue);
 
 
     private:

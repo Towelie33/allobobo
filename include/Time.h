@@ -34,7 +34,7 @@ bool operator<(Time const& time1, Time const& time2);
 bool operator<=(Time const& time1, Time const& time2);
 std::ostream& operator<<(std::ostream &flux, Time const& time);
 
-Time time_to_go(long distance, short speed); // speed in km/h
-Time time_to_go(Point const& from, Point const& to, short speed); // speed in km/h
+Time time_to_go(int distance, int speed); // speed in km/h
+Time time_to_go(Point const& from, Point const& to, int speed); // speed in km/h
 
 #endif // TIME_H

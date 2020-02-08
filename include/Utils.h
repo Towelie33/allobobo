@@ -3,9 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
 #include "Inputs.h"
 #include "Algorithm.h"
 //#include <cpprest/json.h>
+
+// Null json value only used as a default value for parameter answer in run_algo function
+//static web::json::value jnull = web::json::value::null();
 
 /**
  * Convert an integer into a string
@@ -45,7 +49,16 @@ std::vector<int> random_vector(int inf, int sup, int n);
 std::vector<int> generate_random_permutation(int n);
 
 /*
- * Display a json object as a string
+ * Check the presence of an element in a vector
+ * @param vec The vector to search in
+ * @param val The element to search for
+ * @return A boolean standing for the presence of the element in the vector
+ */
+template<typename T>
+bool find_element(std::vector<T> const& vec, T const& val) { return std::find(vec.begin(), vec.end(), val) != vec.end(); }
+
+/*
+ * Display a json value as a string
  * @param jvalue The json object to display
  * @param prefix A string to display before the json
  */
@@ -68,16 +81,17 @@ class ComparePointers
  */
 enum Algo
 {
-    GLUTTON_BREADTH,
-    GLUTTON_DEPTH,
+    GLUTTON_BREADTH, // deprecated
+    GLUTTON_DEPTH,   // deprecated
     GENETIC
 };
 
 /**
- * Run the chosen algorithm on the inputs
+ * Run the chosen algorithm on the inputs and create a json answer
  * @param inputs The nurses and patients
  * @param algo_name The algorithm to use
+ * @param answer The json object holding the answer
  */
-void run_algo(Inputs *inputs, Algo algo_name);//, web::json::value& answer = web::json::value::null());
+void run_algo(Inputs *inputs, Algo algo_name = GENETIC);//, web::json::value &answer = jnull);
 
 #endif // UTILS_H

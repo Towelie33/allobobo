@@ -4,6 +4,7 @@
 #include "Algorithm.h"
 #include "Inputs.h"
 
+// deprecated
 class GluttonDepth : public Algorithm
 {
     public:

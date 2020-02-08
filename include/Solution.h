@@ -11,19 +11,18 @@ class Solution
     public:
 
         Solution();
-        Solution(int nurses, int treatments_per_nurse, std::vector<int> code);
-        Solution(int nurses, int treatments_per_nurse, Solution const& parent, int crossing_point);
-        Solution(int nurses, int treatments_per_nurse, Solution const& parent, int crossing_point1, int crossing_point2);
-        Solution(int nurses, int treatments_per_nurse, Solution const& parent,
-                 std::vector<int> const& crossing_points1, std::vector<int> const& crossing_points2, bool keep_between_points = false);
+        Solution(int nurses, int patients_per_nurse, std::vector<int> code);
+        Solution(Solution const& parent, int crossing_point);
+        Solution(Solution const& parent, int crossing_point1, int crossing_point2);
+        Solution(Solution const& parent, std::vector<int> const& crossing_points1,
+                 std::vector<int> const& crossing_points2, bool keep_between_points = false);
 
         int nurses() const { return m_nurses; }
-        int treatments_per_nurse() const { return m_treatments_per_nurse; }
+        int patients_per_nurse() const { return m_patients_per_nurse; }
 
-        int treatments() const { return m_nurses * m_treatments_per_nurse; }
+        int treatments() const { return m_nurses * m_patients_per_nurse; }
 
-        int distance(int i, int j) const { return m_distances[i][j]; }
-        void distance(int i, int j, int val) { m_distances[i][j] = val; }
+		void distance(int i, int j, int val);
 
         int fitness() const;
         int fitness(int nurse) const { return m_fitness_per_nurse[nurse]; }
@@ -31,6 +30,9 @@ class Solution
 
         int get(int i, int j) const { return m_code[i][j]; }
         void set(int i, int j, int val);
+		void insert(int i, int j, int val);
+
+		int nurse_patients(int nurse) const { return m_code[nurse].size(); }
 
         std::pair<int, int> longest_serial_car_distance(int nurse) const;
         std::pair<int, int> longest_serial_walk_distance(int nurse) const;
@@ -47,12 +49,36 @@ class Solution
         void initialize_distances();
 
     	int m_nurses;
-    	int m_treatments_per_nurse;
+    	int m_patients_per_nurse;
     	std::vector<std::vector<int> > m_code;
     	std::vector<std::vector<int> > m_distances;
     	std::vector<int> m_fitness_per_nurse;
+
+	// Friend function for testing purposes only
+	friend void TEST_SET_DISTANCES(Solution &sol, std::vector<int> distances);
 };
 
 std::ostream& operator<<(std::ostream &flux, Solution const& sol);
+
+/**
+ * Swap two patients of a solution to create a new solution
+ * @param sol The template solution
+ * @param i The nurse of the first patient to swap
+ * @param j The index of the first patient to swap
+ * @param k The nurse of the second patient to swap
+ * @param l The index of the second patient to swap
+ * @return The new solution
+ */
+Solution swap_patients(Solution const& sol, int i, int j, int k, int l);
+
+/**
+ * Insert a patient in a solution to create a new solution
+ * @param sol The template solution
+ * @param i The nurse where to insert the patient
+ * @param j The index where to insert the patient
+ * @param val The index of the patient to insert
+ * @return The new solution
+ */
+Solution insert_patient(Solution const& sol, int i, int j, int val);
 
 #endif // SOLUTION_H

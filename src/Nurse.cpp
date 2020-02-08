@@ -28,22 +28,49 @@ Nurse::Nurse(unsigned int id, std::vector<unsigned int> cannot_do, Point startin
     m_timetable(timetable), m_available(timetable.start_time())
 {}
 /*
-Nurse::Nurse(web::json::object const& jobject)
-	:m_id(jobject.at(L"_id").as_integer()), 
-	m_starting_point(jobject.at(L"position").as_object()), 
-	m_timetable(jobject.at(L"timetable").as_object())
+Nurse::Nurse(web::json::value const& jvalue)
+	:m_id(jvalue.at(L"_id").as_integer()), m_timetable(jvalue.at(L"startTime").as_integer(), 0)
 {
 	// Set cannot_do
-	web::json::array type_ids = jobject.at(L"treatmentTypeIds").as_array();
-	for (auto const& type_id: type_ids)
+	web::json::array type_ids = jvalue.at(L"treatmentTypeIds").as_array();
+	for (web::json::value const& type_id: type_ids)
 	{
 		m_cannot_do.push_back(type_id.as_integer());
 	}
 
+	// obsolete
+	if (jvalue.has_object_field(L"position"))
+	{
+		m_starting_point = Point(jvalue.at(L"position"));
+	}
+	else
+	{
+		m_starting_point = Point::GET_ORIGIN();
+	}
 	m_position = m_starting_point;
+
+	if (jvalue.has_object_field(L"timetable"))
+	{
+		m_timetable = TimeInterval(jvalue.at(L"timetable"));
+	}
+
 	m_available = m_timetable.start_time();
 }
 */
+Nurse& Nurse::operator=(Nurse const& other)
+{
+    if(this != &other)
+    {
+        m_id = other.id();
+        m_cannot_do = other.cannot_do();
+        m_starting_point = other.starting_point();
+        m_position = other.position();
+        m_timetable = other.timetable();
+        m_available = other.available();
+    }
+    return *this;
+}
+
 void Nurse::add_treatment_type(unsigned int type_id)
 {
     m_cannot_do.push_back(type_id);
@@ -51,7 +78,7 @@ void Nurse::add_treatment_type(unsigned int type_id)
 
 bool Nurse::can_do(unsigned int type_id) const
 {
-    return std::find(m_cannot_do.begin(), m_cannot_do.end(), type_id) == m_cannot_do.end();
+    return !find_element<unsigned int>(m_cannot_do, type_id);
 }
 
 void Nurse::reset()
@@ -87,14 +114,54 @@ std::string Nurse::to_string() const
          + ",\n  available: " + m_available.to_string()
          + "\n}";
 }
+/*
+bool Nurse::is_valid_json(web::json::value const& jvalue)
+{
+	// Check fields
+	bool has_fields = jvalue.has_integer_field(L"_id")
+				   && jvalue.has_array_field(L"treatmentTypeIds")
+				   && jvalue.has_integer_field(L"startTime");
+	if (!has_fields)
+	{
+		return false;
+	}
+	if (jvalue.at(L"_id").as_integer() < 0 || jvalue.at(L"startTime").as_integer() < 0)
+	{
+		return false;
+	}
 
+	// Check treatmentTypeIds array
+	web::json::array jarray = jvalue.at(L"treatmentTypeIds").as_array();
+	int jarray_size = jarray.size();
+	for (int i = 0; i < jarray_size; ++i)
+	{
+		web::json::value jval = jarray.at(i);
+		if (!jval.is_integer() || jval.as_integer() < 0)
+		{
+			return false;
+		}
+	}
+
+	// obsolete
+	if (jvalue.has_object_field(L"position") && !Point::is_valid_json(jvalue.at(L"position")))
+	{
+		return false;
+	}
+	if (jvalue.has_object_field(L"timetable") && !TimeInterval::is_valid_json(jvalue.at(L"timetable")))
+	{
+		return false;
+	}
+
+	return true;
+}
+*/
 bool operator<(Nurse const& nurse1, Nurse const& nurse2)
 {
     return nurse2.available() < nurse1.available();
 }
 
-std::ostream& operator<<(std::ostream &flux, Nurse const& nurse)
+std::ostream& operator<<(std::ostream &out, Nurse const& nurse)
 {
-    std::cout << nurse.to_string();
-    return flux;
+    out << nurse.to_string();
+    return out;
 }

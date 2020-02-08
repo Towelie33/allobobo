@@ -3,20 +3,20 @@
 	"walkSpeed": 5,
 	"minCarDist": 1000,
 	"treatmentTypes": [
-		{"_id": 0, "duration": 123},
-		{"_id": 1, "duration": 456}
+		{"_id": 0, "duration": 15},
+		{"_id": 1, "duration": 30}
 	],
 	"nurses": [
-		{"_id": 0, "treatmentTypeIds": [0, 2], "position": {"x": -123, "y": 456}, "timetable": {"start": 600, "end": 1000}},
-		{"_id": 1, "treatmentTypeIds": [1], "position": {"x": 78, "y": -9}, "timetable": {"start": 800, "end": 1200}}
+		{"_id": 0, "treatmentTypeIds": [], "startTime": 600},
+		{"_id": 1, "treatmentTypeIds": [1], "startTime": 480}
 	],
 	"patients": [
 		{"_id": 0, "location": {"x": -894, "y": -1752}, "treatments": [
-			{"_id": 0, "treatmentTypeId": 1, "schedule": {"start": 600, "end": 1600}}
+			{"_id": 0, "treatmentTypeId": 0}
 		]},
 		{"_id": 1, "location": {"x": 1058, "y": 3482}, "treatments": [
-			{"_id": 0, "treatmentTypeId": 0, "schedule": {"start": 1000, "end": 1300}},
-			{"_id": 1, "treatmentTypeId": 1, "schedule": {"start": 600, "end": 900}}
+			{"_id": 1, "treatmentTypeId": 0},
+			{"_id": 2, "treatmentTypeId": 1}
 		]}
 	]
 }

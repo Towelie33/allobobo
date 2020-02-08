@@ -70,9 +70,15 @@ void display_json(web::json::value const& jvalue, utility::string_t const& prefi
 	std::wcout << prefix << jvalue.serialize() << std::endl;
 }
 */
-void run_algo(Inputs *inputs, Algo algo_name)//, web::json::value& answer)
+void run_algo(Inputs *inputs, Algo algo_name)//, web::json::value &answer)
 {
-    // Initialize algo
+	// Initialize inputs
+	inputs->initialize();
+
+	// Print inputs
+	//std::cout << *inputs << std::endl << std::endl;
+
+	// Initialize algo
     Algorithm *algo = 0;
     switch (algo_name)
     {
@@ -95,18 +101,14 @@ void run_algo(Inputs *inputs, Algo algo_name)//, web::json::value& answer)
             return;
     }
 
-    // Print inputs
-    std::cout << *inputs << std::endl << std::endl;
-
     // Run algorithm
     algo->run();
 
     // Print output
-    std::cout << *algo << std::endl << std::endl;
-	/*display_json(algo->to_json());
+    //std::cout << *algo << std::endl << std::endl;
 
 	// Create the json
-	if (!answer.is_null())
+	/*if (!answer.is_null())
 	{
 		answer = algo->to_json();
 	}

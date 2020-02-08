@@ -66,7 +66,7 @@ std::string Algorithm::to_string() const
 
     for (int i = 0, len_nurses = m_inputs->nurses_size(); i < len_nurses; ++i)
     {
-        unsigned int nurse_id = m_inputs->nurses()[i].id();
+        unsigned int nurse_id = m_inputs->get_nurse(i)->id();
         str = str + "\n\nNurse id " + int_to_string(nurse_id) + ": [";
         bool first = true;
         for (int j = 0, len_appointments = appointments_size(); j < len_appointments; ++j)
@@ -108,12 +108,12 @@ Treatment* Algorithm::is_available(Patient *patient, Time const& time, Nurse con
 Appointment* Algorithm::nearest_appointment(Nurse const& nurse)
 {
     Appointment *appointment = nullptr;
-    long min_distance = -1;
+    int min_distance = -1;
 
     for (int i = 0, len = m_inputs->patients_size(); i < len; ++i)
     {
         Patient *patient = m_inputs->get_patient(i);
-        long dist = distance(nurse.position(), patient->location());
+        int dist = distance(nurse.position(), patient->location());
         if (dist < min_distance || min_distance < 0)
         {
             Time arrival = nurse.available() + time_to_go(dist, m_inputs->car_speed());
@@ -133,8 +133,8 @@ Appointment* Algorithm::nearest_appointment(Nurse const& nurse)
     return appointment;
 }
 
-std::ostream& operator<<(std::ostream &flux, Algorithm const& algo)
+std::ostream& operator<<(std::ostream &out, Algorithm const& algo)
 {
-    std::cout << algo.to_string();
-    return flux;
+    out << algo.to_string();
+    return out;
 }

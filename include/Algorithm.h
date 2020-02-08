@@ -36,8 +36,8 @@ class Algorithm
 
     protected:
 
-        Treatment* is_available(Patient* patient, Time const& time, Nurse const& nurse) const;
-        Appointment* nearest_appointment(Nurse const& nurse);
+        Treatment* is_available(Patient* patient, Time const& time, Nurse const& nurse) const; // deprecated
+        Appointment* nearest_appointment(Nurse const& nurse);								   // deprecated
 
         virtual void find_appointments() = 0;
 
@@ -48,6 +48,6 @@ class Algorithm
         std::vector<Appointment*> m_appointments;
 };
 
-std::ostream& operator<<(std::ostream &flux, Algorithm const& algo);
+std::ostream& operator<<(std::ostream &out, Algorithm const& algo);
 
 #endif // ALGORITHM_H

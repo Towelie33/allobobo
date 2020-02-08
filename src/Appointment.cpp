@@ -30,8 +30,8 @@ std::string Appointment::to_string() const
          + "\n}";
 }
 
-std::ostream& operator<<(std::ostream &flux, Appointment const& appointment)
+std::ostream& operator<<(std::ostream &out, Appointment const& appointment)
 {
-    std::cout << appointment.to_string();
-    return flux;
+    out << appointment.to_string();
+    return out;
 }

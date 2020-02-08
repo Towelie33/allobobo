@@ -12,12 +12,14 @@ class TreatmentType
 
         TreatmentType(unsigned int id, Time duration);
         TreatmentType(unsigned int id, short duration);
-	//TreatmentType(web::json::object const& jobject);
+        //TreatmentType(web::json::value const& jvalue);
 
         unsigned int id() const { return m_id; }
         Time duration() const { return m_duration; }
 
         std::string to_string() const;
+
+		//static bool is_valid_json(web::json::value const& jvalue);
 
 
     private:

@@ -10,10 +10,11 @@ class TimeInterval
 {
     public:
 
-        TimeInterval(Time start_time, Time end_time);
+		TimeInterval();
+		TimeInterval(Time start_time, Time end_time);
         TimeInterval(short start_time, short end_time);
         TimeInterval(Time start_time, short duration);
-	//TimeInterval(web::json::object const& jobject);
+        //TimeInterval(web::json::value const& jvalue);
 
         static TimeInterval GET_FULL_DAY() { return FULL_DAY; }
         static void SET_FULL_DAY(TimeInterval val) { FULL_DAY = val; }
@@ -24,6 +25,8 @@ class TimeInterval
         bool contains(Time const& time) const;
 
         std::string to_string() const;
+
+		//static bool is_valid_json(web::json::value const& jvalue);
 
 
     private:

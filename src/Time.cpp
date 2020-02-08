@@ -23,7 +23,7 @@ Time::Time(short hours, short minutes)
 
 short Time::to_hours() const
 {
-    return m_minutes / 60;
+    return (m_minutes / 60) % 24;
 }
 
 short Time::to_minutes() const
@@ -72,19 +72,19 @@ bool operator<=(Time const& time1, Time const& time2)
     return time1.minutes() <= time2.minutes();
 }
 
-std::ostream& operator<<(std::ostream &flux, Time const& time)
+std::ostream& operator<<(std::ostream &out, Time const& time)
 {
-    std::cout << time.to_string();
-    return flux;
+    out << time.to_string();
+    return out;
 }
 
-Time time_to_go(long dist, short speed)
+Time time_to_go(int dist, int speed)
 {
-    short minutes = (short) round((float) dist / ((float) speed / 0.06f));
+    short minutes = (short) ceil(((double) dist) / ((double) speed / 0.06));
     return Time(minutes);
 }
 
-Time time_to_go(Point const& from, Point const& to, short speed)
+Time time_to_go(Point const& from, Point const& to, int speed)
 {
     return time_to_go(distance(from, to), speed);
 }

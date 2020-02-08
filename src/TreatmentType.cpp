@@ -13,8 +13,8 @@ TreatmentType::TreatmentType(unsigned int id, short duration)
     :m_id(id), m_duration(duration)
 {}
 /*
-TreatmentType::TreatmentType(web::json::object const& jobject)
-	:m_id(jobject.at(L"_id").as_integer()), m_duration(Time(jobject.at(L"duration").as_integer()))
+TreatmentType::TreatmentType(web::json::value const& jvalue)
+	:m_id(jvalue.at(L"_id").as_integer()), m_duration(Time(jvalue.at(L"duration").as_integer()))
 {}
 */
 std::string TreatmentType::to_string() const
@@ -23,14 +23,29 @@ std::string TreatmentType::to_string() const
          + ", duration: " + m_duration.to_string()
          + " }";
 }
-
+/*
+bool TreatmentType::is_valid_json(web::json::value const& jvalue)
+{
+	bool has_fields = jvalue.has_integer_field(L"_id")
+				   && jvalue.has_integer_field(L"duration");
+	if (!has_fields)
+	{
+		return false;
+	}
+	if (jvalue.at(L"_id").as_integer() < 0 || jvalue.at(L"duration").as_integer() <= 0)
+	{
+		return false;
+	}
+	return true;
+}
+*/
 bool operator==(TreatmentType const& type1, TreatmentType const& type2)
 {
     return (type1.id() == type2.id());
 }
 
-std::ostream& operator<<(std::ostream &flux, TreatmentType const& type)
+std::ostream& operator<<(std::ostream &out, TreatmentType const& type)
 {
-    std::cout << type.to_string();
-    return flux;
+    out << type.to_string();
+    return out;
 }

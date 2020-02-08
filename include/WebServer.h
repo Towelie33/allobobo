@@ -15,7 +15,6 @@ class WebServer
 		pplx::task<void> close() { return m_listener.close(); }
 
 		static void handle_request(web::http::http_request request, std::function<void(web::json::value const&, web::json::value&)> action);
-		static void handle_get(web::http::http_request request);
 		static void handle_post(web::http::http_request request);
 
 		void run();
