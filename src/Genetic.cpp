@@ -55,18 +55,17 @@ int Genetic::fitness(Solution &sol, Inputs *inputs)
             continue;
         }
         nurse_fitness = 0;
-
 		// Calculate nurse fitness
-		Point current(inputs->get_patient(sol.get(i, 0))->location());
-		Point car(current);
-		for (int j = 1, treatments_per_nurse = inputs->treatments_per_nurse(); j < treatments_per_nurse; ++j)
+        Point current(inputs->get_patient(sol.get(i, 0))->location());
+        Point car(current);
+        for (int j = 1, treatments_per_nurse = inputs->treatments_per_nurse(); j < treatments_per_nurse; ++j)
 		{
-			Point destination(inputs->get_patient(sol.get(i, j))->location());
-			int dist = distance(current, destination);
-			if (dist > inputs->min_car_dist())
+            Point destination(inputs->get_patient(sol.get(i, j))->location());
+            int dist = distance(current, destination);
+            if (dist > inputs->min_car_dist())
 			{
-				dist = distance(car, destination);
-				if (dist > inputs->min_car_dist())
+                dist = distance(car, destination);
+                if (dist > inputs->min_car_dist())
                 {
                     nurse_fitness += dist;
                     car = destination;

@@ -55,14 +55,13 @@ TEST_F(testSolution, longest_serial_walk){
 
 TEST_F(testSolution, constructor_crossing_point){
     Solution solution_parent = Solution(2, 3, {6, 1, 2, 3, 4, 5});
-
     Solution solution_child = Solution(2, 3, solution_parent, {1, 0}, {3, 1}, true);
-    EXPECT_EQ(solution_child.get(0, 0), 0);
-    EXPECT_EQ(solution_child.get(0, 1), 1);
-    EXPECT_EQ(solution_child.get(0, 2), 2);
-    EXPECT_EQ(solution_child.get(1, 0), 3);
-    EXPECT_EQ(solution_child.get(1, 1), 0);
-    EXPECT_EQ(solution_child.get(1, 2), 0);
+
+    std::vector<std::vector<int> > child;
+    child.push_back({0, 1, 2});
+    child.push_back({3, 0, 0});
+    TEST_GET_CODE(solution_child);
+    EXPECT_EQ(TEST_GET_CODE(solution_child), child);
 }
 
 
